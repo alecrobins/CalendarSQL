@@ -11,13 +11,14 @@ create table if not exists user (
 create table if not exists location (
 	id integer primary key AUTO_INCREMENT,
 	name varchar(200) not null unique,
+	capacity integer, 
 	isGroupFacility boolean
 );
 
 create table if not exists event (
 	id integer primary key AUTO_INCREMENT,
-	startTime timestamp not null,
-	endTime timestamp not null,
+	startTime timestamp,
+	endTime timestamp,
 	eventTitle varchar(200), 
 	eventDescription varchar(200),
 	eventReminderStart timestamp,
@@ -29,7 +30,7 @@ create table if not exists event (
 	isPublic boolean not null,
 
 	foreign key (locationID)
-		references location(id)
+	references location(id)
 		on delete cascade
 		on update cascade
 );
@@ -83,4 +84,47 @@ create table if not exists userEvent (
 
 );
 
+create table if not exists groupUserTimeSlots(
+	initiatorID integer not null,
+	userID integer not null,
+	eventID integer not null,
+	startTime timestamp not null,
+	endTime timestamp not null,
 
+	primary key (initiatorID, userID, eventID, startTime),
+
+	foreign key (initiatorID)
+		references user(id)
+		on delete cascade,
+	
+	foreign key (userID)
+		references user(id)
+		on delete cascade,
+
+	foreign key (eventID)
+		references event(id)
+		on delete cascade
+		on update cascade
+);
+
+create table if not exists groupUserTimeSlotsSelected(
+	initiatorID integer not null,
+	userID integer not null,
+	eventID integer not null,
+	startTime timestamp,
+	endTime timestamp,
+
+	primary key (initiatorID, userID, eventID, startTime),
+
+	foreign key (initiatorID)
+		references user(id)
+		on delete cascade,
+
+	foreign key (userID)
+		references user(id)
+		on delete cascade,
+
+	foreign key (eventID)
+		references event(id)
+		on delete cascade
+);
